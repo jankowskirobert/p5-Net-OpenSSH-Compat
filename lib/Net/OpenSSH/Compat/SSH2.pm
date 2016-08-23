@@ -302,7 +302,7 @@ sub tcpip { Carp::croak "method tcpip not implemented" }
 sub listen { Carp::croak "method listen not implemented" }
 
 sub poll {
-    require Net::OpenSSH::Compat::SSH::Poll;
+    require Net::OpenSSH::Compat::SSH2::Poll;
     goto &_poll;
 }
 
@@ -466,14 +466,14 @@ sub _slave_exited {
 sub DESTROY {
     my $chan = shift;
     my $ch = $chan->_hash;
-    $chan->close if $ch->{state} eq 'exec';
+    $chan->close if $ch->{state} eq 'exec' and defined $chan;
     $chan->SUPER::DESTROY;
 }
 
 sub wait_closed {
     my $chan = shift;
     my $ch = $chan->_hash;
-    shift->close if $ch->{state} eq 'exec';
+    shift->close if $ch->{state} eq 'exec' and defined shift;
     $ch->{state} eq 'closed';
 }
 
